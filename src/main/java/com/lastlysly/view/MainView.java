@@ -196,7 +196,7 @@ public class MainView extends JXFrame implements ActionListener {
 
     public static void main(String[] args) {
         myZHConverterUtils = new MyZHConverterUtils();
-        new MainView("简转繁客户端");
+        new MainView("简繁转换客户端");
     }
 
     /**
@@ -248,20 +248,29 @@ public class MainView extends JXFrame implements ActionListener {
         if (e.getSource() == changeBtn){
             glasspane.start();//开始动画加载效果 frame.setVisible(true);   // Later, to disable,在合适的地方关闭动画效果 glasspane.stop();
 
-            String converType = comboBox.getSelectedItem().toString();
-            System.out.println(converType);
-            String filePath = filePathInput.getText();
-            jTextArea.append("开始扫描..." + filePath +"\n");
-            try {
-                MyUtils.scanFolderAndConver(myZHConverterUtils,filePath,converType,jTextArea);
-                JOptionPane.showMessageDialog(this, "转换成功" , "提示",JOptionPane.WARNING_MESSAGE);
-                glasspane.stop();
-                jTextArea.append("done..." + "\n");
-            } catch (IOException e1) {
-                JOptionPane.showMessageDialog(this, "异常：" + e1.getMessage(), "异常",JOptionPane.ERROR_MESSAGE);
-                glasspane.stop();
-                jTextArea.append("转换异常..." + "\n");
-            }
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    String converType = comboBox.getSelectedItem().toString();
+                    System.out.println(converType);
+                    String filePath = filePathInput.getText();
+                    jTextArea.append("开始扫描..." + filePath +"\n");
+                    jTextArea.setCaretPosition(jTextArea.getText().length());
+                    try {
+                        MyUtils.scanFolderAndConver(myZHConverterUtils,filePath,converType,jTextArea);
+                        JOptionPane.showMessageDialog(MainView.getFrames()[0], "转换成功" , "提示",JOptionPane.WARNING_MESSAGE);
+                        glasspane.stop();
+                        jTextArea.append("done..." + "\n");
+                        jTextArea.setCaretPosition(jTextArea.getText().length());
+                    } catch (IOException e1) {
+                        JOptionPane.showMessageDialog(MainView.getFrames()[0], "异常：" + e1.getMessage(), "异常",JOptionPane.ERROR_MESSAGE);
+                        glasspane.stop();
+                        jTextArea.append("转换异常..." + "\n");
+                        jTextArea.setCaretPosition(jTextArea.getText().length());
+                    }
+                }
+            }).start();
+
 
         }
     }

@@ -42,6 +42,7 @@ public class MyUtils {
                 FileUtils.write(new File(path),result,"UTF-8");
             }
             jTextArea.append("转换完成："+path + "\n");
+            jTextArea.setCaretPosition(jTextArea.getText().length());
         }
     }
 
